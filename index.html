@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+	<title>Housepit</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.17/Tone.js"></script>
+</head>
+<body>
+	<p>Bai-ee_(Thats_My_Sista)_Unreleased</p>
+	<button id="play-toggle">PLAY/STOP</button>
+
+	<script type="text/javascript">
+		const trackDir = "/audio/Bai-ee_Track/Bai-ee_Bank_1/";
+
+		const parts = [
+			{file: "1_Freeze 6-Bai-ee_(Thats_My_Sista)_Unreleased.wav", length : "16", loop: 2},
+			{file: "2_Freeze 6-Bai-ee_(Thats_My_Sista)_Unreleased.wav", length : "32", loop: 0},
+			{file: "3_Freeze 6-Bai-ee_(Thats_My_Sista)_Unreleased.wav", length : "64", loop: 0},
+			{file: "4_Freeze 6-Bai-ee_(Thats_My_Sista)_Unreleased.wav", length : "32", loop: 0},
+			{file: "5_Freeze 6-Bai-ee_(Thats_My_Sista)_Unreleased.wav", length : "16", loop: 0},
+			{file: "6_Freeze 6-Bai-ee_(Thats_My_Sista)_Unreleased.wav", length : "16", loop: 0},
+			{file: "7_Freeze 6-Bai-ee_(Thats_My_Sista)_Unreleased.wav", length : "16", loop: 0},
+			{file: "8_Freeze 6-Bai-ee_(Thats_My_Sista)_Unreleased.wav", length : "8", loop: 2}
+		];
+
+		Tone.Transport.bpm.value = 120;
+		Tone.Transport.loop = false;
+
+		const players = parts.map(part => new Tone.Player({url:trackDir + part.file}));
+		var playhead = 0;
+		players.forEach( (player, i) => {
+			if (parts[i].loop == 0) { return }
+
+			player.loop = parts[i].loop > 1;
+			var loopLength = parts[i].length * parts[i].loop;
+			player.toDestination().sync().start(playhead + "m").stop(playhead + loopLength + "m");
+			playhead += loopLength
+		});
+
+		document.querySelector("#play-toggle").onclick = function() {
+			Tone.start(); 
+			if (Tone.Transport.state == "started") {
+				Tone.Transport.stop() 
+			} else {
+				Tone.Transport.start() 
+			}
+			
+		}
+	</script>
+</body>
+</html>
