@@ -9,7 +9,7 @@
 </head>
 <body>
 	<p>Bai-ee_(Thats_My_Sista)_Unreleased</p>
-	<button id="play-toggle">PLAY/STOP</button>
+	<button id="play-toggle" disabled>PLAY/STOP</button>
 
 	<script type="text/javascript">
 		const trackDir = "./audio/Bai-ee_Track/Bai-ee_Bank_1/";
@@ -38,6 +38,11 @@
 			player.toDestination().sync().start(playhead + "m").stop(playhead + loopLength + "m");
 			playhead += loopLength
 		});
+
+		Tone.loaded().then(function(){
+            console.log("buffers loaded")
+			document.querySelector("#play-toggle").disabled = false    
+        })
 
 		document.querySelector("#play-toggle").onclick = function() {
 			Tone.start(); 
