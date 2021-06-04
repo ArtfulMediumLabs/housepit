@@ -4,14 +4,18 @@
   <meta charset="utf-8">
 	<title>Housepit</title>
 
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.17/Tone.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta property="og:image" content="thumbnail.jpg" />
+    <link type="text/css" rel="stylesheet" href="style.css" />
+	<script src="Tone.js"></script>
     <script src="bufferToWav.js"></script>
 </head>
 <body>
+	<div id="content">
 	<p>Bai-ee_(Thats_My_Sista)_Unreleased</p>
 	<button id="play-toggle" disabled>PLAY/STOP</button>
 	<a href="" id="download-link"><button id="download" disabled>DOWNLOAD</button></a>
+	</div>
 
 	<script type="text/javascript">
         const player = new Tone.Player().toDestination();
