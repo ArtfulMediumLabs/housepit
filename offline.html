@@ -6,11 +6,12 @@
 
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.17/Tone.js"></script>
+    <script src="bufferToWav.js"></script>
 </head>
 <body>
 	<p>Bai-ee_(Thats_My_Sista)_Unreleased</p>
 	<button id="play-toggle" disabled>PLAY/STOP</button>
-	<button id="download" disabled>DOWNLOAD</button>
+	<a href="" id="download-link"><button id="download" disabled>DOWNLOAD</button></a>
 
 	<script type="text/javascript">
         const player = new Tone.Player().toDestination();
@@ -58,6 +59,7 @@
             renderingPromise.then(buffer => {
                 console.log("rendering complete")
                 player.buffer = buffer
+                makeDownload(buffer.get())
             });
             
 	    	renderingPromise.then(() => document.querySelector("#play-toggle").disabled = false);
@@ -73,9 +75,14 @@
 			}
 		}
 
-        document.querySelector("#download").onclick = function() {
-            console.log("start download")
-		}
+        function makeDownload(buffer) {
+            var newFile = URL.createObjectURL(bufferToWave(buffer, 0, buffer.length));
+
+            var downloadLink = document.getElementById("download-link");
+            downloadLink.href = newFile;
+            var name = "Bai-ee_(Thats_My_Sista)_Unreleased.wav"
+            downloadLink.download = name;
+        }
 	</script>
 </body>
 </html>
