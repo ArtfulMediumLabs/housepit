@@ -6,53 +6,83 @@
 
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.17/Tone.js"></script>
+    <script src="bufferToWav.js"></script>
 </head>
 <body>
 	<p>Bai-ee_(Thats_My_Sista)_Unreleased</p>
 	<button id="play-toggle" disabled>PLAY/STOP</button>
+	<a href="" id="download-link"><button id="download" disabled>DOWNLOAD</button></a>
 
 	<script type="text/javascript">
+        const player = new Tone.Player().toDestination();
+
 		const trackDir = "./audio/Bai-ee_Track/Bai-ee_Bank_1/";
 
 		const parts = [
-			{file: "1_Freeze 6-Bai-ee_(Thats_My_Sista)_Unreleased.wav", length : "16", loop: 2},
-			{file: "2_Freeze 6-Bai-ee_(Thats_My_Sista)_Unreleased.wav", length : "32", loop: 0},
-			{file: "3_Freeze 6-Bai-ee_(Thats_My_Sista)_Unreleased.wav", length : "64", loop: 0},
-			{file: "4_Freeze 6-Bai-ee_(Thats_My_Sista)_Unreleased.wav", length : "32", loop: 0},
-			{file: "5_Freeze 6-Bai-ee_(Thats_My_Sista)_Unreleased.wav", length : "16", loop: 0},
-			{file: "6_Freeze 6-Bai-ee_(Thats_My_Sista)_Unreleased.wav", length : "16", loop: 0},
-			{file: "7_Freeze 6-Bai-ee_(Thats_My_Sista)_Unreleased.wav", length : "16", loop: 0},
-			{file: "8_Freeze 6-Bai-ee_(Thats_My_Sista)_Unreleased.wav", length : "8", loop: 2}
+			{file: "1_Freeze 6-Bai-ee_(Thats_My_Sista)_Unreleased.wav", length : 16, loop: 1},
+			{file: "2_Freeze 6-Bai-ee_(Thats_My_Sista)_Unreleased.wav", length : 32, loop: 0},
+			{file: "3_Freeze 6-Bai-ee_(Thats_My_Sista)_Unreleased.wav", length : 64, loop: 0},
+			{file: "4_Freeze 6-Bai-ee_(Thats_My_Sista)_Unreleased.wav", length : 32, loop: 0},
+			{file: "5_Freeze 6-Bai-ee_(Thats_My_Sista)_Unreleased.wav", length : 16, loop: 0},
+			{file: "6_Freeze 6-Bai-ee_(Thats_My_Sista)_Unreleased.wav", length : 16, loop: 0},
+			{file: "7_Freeze 6-Bai-ee_(Thats_My_Sista)_Unreleased.wav", length : 16, loop: 0},
+			{file: "8_Freeze 6-Bai-ee_(Thats_My_Sista)_Unreleased.wav", length : 8, loop: 1}
 		];
 
-		Tone.Transport.bpm.value = 120;
-		Tone.Transport.loop = false;
+        const buffers = parts.map(part => new Tone.Buffer({url:trackDir + part.file}));
 
-		const players = parts.map(part => new Tone.Player({url:trackDir + part.file}));
-		var playhead = 0;
-		players.forEach( (player, i) => {
-			if (parts[i].loop == 0) { return }
-
-			player.loop = parts[i].loop > 1;
-			var loopLength = parts[i].length * parts[i].loop;
-			player.toDestination().sync().start(playhead + "m").stop(playhead + loopLength + "m");
-			playhead += loopLength
-		});
-
-		Tone.loaded().then(function(){
+        Tone.loaded().then(function(){
             console.log("buffers loaded")
-			document.querySelector("#play-toggle").disabled = false    
+            render()
         })
+
+        var totalLength = parts.reduce((sum, { length, loop }) => sum + length * loop, 0)
+
+        function render() {
+            const renderingPromise = Tone.Offline(({ transport }) => {
+                transport.bpm.value = 120;
+
+                var playhead = 0;
+                buffers.forEach( (buffer, i) => {
+                    if (parts[i].loop == 0) { return }
+
+                    var partPlayer = new Tone.Player(buffer)
+                    partPlayer.loop = parts[i].loop > 1;
+                    var loopLength = parts[i].length * parts[i].loop;
+                    partPlayer.toDestination().sync().start(playhead + "m").stop(playhead + loopLength + "m");
+                    playhead += loopLength
+                });
+
+                transport.start();
+            }, Tone.Time(totalLength + "m"))
+
+            renderingPromise.then(buffer => {
+                console.log("rendering complete")
+                player.buffer = buffer
+                makeDownload(buffer.get())
+            });
+            
+	    	renderingPromise.then(() => document.querySelector("#play-toggle").disabled = false);
+            renderingPromise.then(() => document.querySelector("#download").disabled = false);
+        }
 
 		document.querySelector("#play-toggle").onclick = function() {
 			Tone.start(); 
-			if (Tone.Transport.state == "started") {
-				Tone.Transport.stop() 
+			if (player.state == "started") {
+				player.stop()
 			} else {
-				Tone.Transport.start() 
+				player.start()
 			}
-			
 		}
+
+        function makeDownload(buffer) {
+            var newFile = URL.createObjectURL(bufferToWave(buffer, 0, buffer.length));
+
+            var downloadLink = document.getElementById("download-link");
+            downloadLink.href = newFile;
+            var name = "Bai-ee_(Thats_My_Sista)_Unreleased.wav"
+            downloadLink.download = name;
+        }
 	</script>
 </body>
 </html>
