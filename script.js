@@ -1,3 +1,9 @@
+// http://0.0.0.0:8000/?creator=tz1fNZaC8GHomZFYpEDuHob2u5reJBZsyP9D&viewer=tz1fNZaC8GHomZFYpEDuHob2u5reJBZsyP9D&objkt=135517
+
+const creator = new URLSearchParams(window.location.search).get('creator')
+const viewer = new URLSearchParams(window.location.search).get('viewer')
+const objkt = new URLSearchParams(window.location.search).get('objkt')
+var isOwned = false;
 
 let playToggle = document.querySelector("#play-toggle");
 let downloadButton = document.querySelector("#download");
@@ -78,7 +84,7 @@ function render() {
     });
 
     renderingPromise.then(() => playToggle.disabled = false);
-    renderingPromise.then(() => document.querySelector("#download").disabled = false);
+    renderingPromise.then(() => downloadButton.disabled = !isOwned);
 }
 
 document.querySelector("#play-toggle").onclick = function () {
@@ -98,3 +104,20 @@ function makeDownload(buffer) {
     var name = "Bai-ee_(Thats_My_Sista)_Unreleased.wav"
     downloadLink.download = name;
 }
+
+
+
+function validateToken(viewer, objkt){
+    const url = 'https://api.tzkt.io/v1/bigmaps/511/keys?key.address=' + viewer + '&key.nat=' + objkt + '&select=value';
+    console.log(url)
+    axios.get(url)
+    .then(result => {
+        let count = result.data ?? [];
+        console.log(result.data);
+        isOwned = count.length > 0;
+        downloadButton.disabled == !playToggle.disabled && !isOwned;
+    })
+    .catch(err => console.log('error', err));
+}
+
+validateToken(viewer, objkt);
