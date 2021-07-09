@@ -28,20 +28,21 @@ function enableElements() {
 
 const player = new Tone.Player().toDestination();
 
-const trackDir = "";
+const gateway = 'https://gateway.pinata.cloud/ipfs/';
 
+// QmPcYMDKcqUvCxKUXped45QZ6Eqm1J88fkRFLK9jWBb5xu
 const parts = [
-    { file: "1_Bai-ee_Thats_My_Sista.mp3", length: 16, loop: 1 },
-    { file: "2_Bai-ee_Thats_My_Sista.mp3", length: 32, loop: 0 },
-    { file: "3_Bai-ee_Thats_My_Sista.mp3", length: 64, loop: 0 },
-    { file: "4_Bai-ee_Thats_My_Sista.mp3", length: 32, loop: 0 },
-    { file: "5_Bai-ee_Thats_My_Sista.mp3", length: 16, loop: 0 },
-    { file: "6_Bai-ee_Thats_My_Sista.mp3", length: 16, loop: 0 },
-    { file: "7_Bai-ee_Thats_My_Sista.mp3", length: 16, loop: 0 },
-    { file: "8_Bai-ee_Thats_My_Sista.mp3", length: 8, loop: 1 }
+    { name: "1_Bai-ee_Thats_My_Sista.wav", hash: 'QmPcYMDKcqUvCxKUXped45QZ6Eqm1J88fkRFLK9jWBb5xu', length: 16, loop: 1 },
+    { name: "2_Bai-ee_Thats_My_Sista.wav", hash: 'QmRQ7CWWijYqDEFL8CDPXWNnbdC687vnRcowGtNxW7CPM9', length: 32, loop: 0 },
+    { name: "3_Bai-ee_Thats_My_Sista.wav", hash: 'QmRGfHfqa12kzKFyQuf1AJ5E7Bk8f6ytrggUtNfQsJKuAk', length: 64, loop: 0 },
+    // { name: "4_Bai-ee_Thats_My_Sista", hash: '', length: 32, loop: 0 },
+    // { name: "5_Bai-ee_Thats_My_Sista", hash: '', length: 16, loop: 0 },
+    // { name: "6_Bai-ee_Thats_My_Sista", hash: '', length: 16, loop: 0 },
+    // { name: "7_Bai-ee_Thats_My_Sista", hash: '', length: 16, loop: 0 },
+    // { name: "8_Bai-ee_Thats_My_Sista", hash: '', length: 8, loop: 1 }
 ];
 
-const buffers = parts.map(part => new Tone.Buffer({ url: trackDir + part.file }));
+const buffers = parts.map(part => new Tone.Buffer({ url: gateway + part.hash + '/' + part.name }));
 
 Tone.loaded().then(function () {
     status.innerHTML = "Track Loaded"
