@@ -19,6 +19,16 @@ body {
 	background: black;
 }
 
+#status {
+  color: white;
+  position: absolute;
+  top: 440px;
+  left: 105px;
+  width: 200px;
+  text-align: center;
+  font-size: 24px;
+}
+
 #content {
   position: relative;
 	margin: auto;
@@ -53,6 +63,23 @@ body {
   /* slighlty off to show border */
   left: 442px; 
   background-image: url(download_img.png);
+}
+
+.preview {
+  position: absolute;
+  bottom: 7px;
+  left: 3px;
+  height: 57px;
+  width: 208px;
+  background-image: url(component_preview_img.png);
+  border: 0;
+}
+
+input.repeat {
+  position: absolute;
+  width: 50px;
+  top: 100px;
+  left: 80px;
 }
 
 * {

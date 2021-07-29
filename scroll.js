@@ -6,7 +6,7 @@ const wrapper  = document.querySelector(".wrapper");
 const boxes    = document.querySelector(".boxes");
 const proxy    = document.createElement("div");
 
-const numBoxes  = 10;  
+const numBoxes  = 8;  
 const boxWidth  = 208 + 6;
 const boxHeight = 263 + 14;  
 const imgWidth  = boxWidth  - 6;
@@ -28,12 +28,26 @@ for (let i = 1; i <= numBoxes; i++) {
   img.src = src;
   img.width = imgWidth;
   img.height = imgHeight;
+
+  const input = document.createElement("input");
+  input.type = "number"
+  input.className = "repeat"
+  input.min = 0;
+  input.step = 1;
+  input.value = 1;
+  input.disabled = true;
+
+  const preview = document.createElement("button");
+  preview.className = "preview"
+  preview.onclick = function () { console.log("preview:", i) }
   
   const box = document.createElement("div");
   box.className = "box";
   
   box.appendChild(img);
   box.appendChild(num);
+  box.appendChild(input);
+  box.appendChild(preview);
   
   boxes.appendChild(box);
 
