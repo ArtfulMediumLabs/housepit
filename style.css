@@ -78,8 +78,8 @@ body {
 input.repeat {
   position: absolute;
   width: 50px;
-  top: 100px;
-  left: 80px;
+  top: 120px;
+  left: 85px;
 }
 
 * {
