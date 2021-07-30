@@ -39,7 +39,11 @@ for (let i = 1; i <= numBoxes; i++) {
 
   const preview = document.createElement("button");
   preview.className = "preview"
-  preview.onclick = function () { console.log("preview:", i) }
+  preview.onclick = function () { 
+    const index = i - 1;
+    console.log("preview:", index);
+    previewPart(index);
+  }
   
   const box = document.createElement("div");
   box.className = "box";

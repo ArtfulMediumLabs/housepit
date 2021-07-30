@@ -87,6 +87,14 @@ function render() {
     renderingPromise.then(() => downloadButton.disabled = !isOwned);
 }
 
+function previewPart(index) {
+    if (player.state == "started") {
+        player.stop()
+    }
+    player.buffer = buffers[index];
+    player.start();
+}
+
 document.querySelector("#play-toggle").onclick = function () {
     Tone.start();
     if (player.state == "started") {
@@ -105,15 +113,11 @@ function makeDownload(buffer) {
     downloadLink.download = name;
 }
 
-
-
 function validateToken(viewer, objkt){
     const url = 'https://api.tzkt.io/v1/bigmaps/511/keys?key.address=' + viewer + '&key.nat=' + objkt + '&select=value';
-    console.log(url)
     axios.get(url)
     .then(result => {
         let count = result.data ?? [];
-        console.log(result.data);
         isOwned = count.length > 0;
         downloadButton.disabled == !playToggle.disabled && !isOwned;
     })
