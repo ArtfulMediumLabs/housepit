@@ -95,12 +95,14 @@ function previewPart(index) {
     player.start();
 }
 
-document.querySelector("#play-toggle").onclick = function () {
+playToggle.onclick = function () {
     Tone.start();
     if (player.state == "started") {
-        player.stop()
+        player.stop();
+        playToggle.className = "play";
     } else {
-        player.start()
+        player.start();
+        playToggle.className = "stop";
     }
 }
 

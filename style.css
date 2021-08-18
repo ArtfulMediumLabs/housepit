@@ -56,7 +56,14 @@ body {
 
 #play-toggle {
   left: 0px;
+}
+
+#play-toggle.play {
   background-image: url(play_img.png);
+}
+
+#play-toggle.stop {
+  background-image: url(stop_img.jpg);
 }
 
 #download {
