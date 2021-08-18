@@ -110,6 +110,8 @@ function previewPart(index) {
     updatePlayClass();
 }
 
+var now = 0;
+
 playToggle.onclick = function () {
     Tone.start();
 
@@ -121,8 +123,12 @@ playToggle.onclick = function () {
 
     if (player.state == "started") {
         player.stop();
+        now = -1;
+        updateProgressBar(0);
     } else {
         player.start();
+        now = Tone.now();
+        window.requestAnimationFrame(step);
     }
 
     updatePlayClass();
@@ -156,7 +162,7 @@ function updateDurations() {
         element.innerHTML = formatDuration(duration);
     }
 
-    let totalDurationElement = document.querySelector("#totalDuration");
+    let totalDurationElement = document.getElementById("totalDuration");
     let totalDuration = trackDuration();
     totalDurationElement.innerHTML = formatDuration(totalDuration);
 
@@ -176,6 +182,26 @@ function formatDuration(duration) {
     let seconds = Math.floor(duration - (minutes * 60));
     if (seconds < 10) { seconds = "0" + seconds; }
     return minutes + ":" + seconds;
+}
+
+function step(timestamp) {
+    if (now < 0) { return; }
+    if (activeBufferIndex != renderedBufferIndex) { return; }
+
+    let seconds = Tone.now() - now;
+    let progress = seconds/renderedBuffer.duration;
+
+    updateProgressBar(progress);
+
+    if (now <= 1) {
+      window.requestAnimationFrame(step);
+    }
+}
+
+function updateProgressBar(progress) {
+    let progressBar = document.getElementById("progress")
+    let width = Math.floor(progress * 300);
+    progressBar.style.width = width + 'px';
 }
 
 function makeDownload(buffer) {
