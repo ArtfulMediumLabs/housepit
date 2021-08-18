@@ -16,6 +16,7 @@ for (var i = 0, element; element = elements[i]; i++) {
         playToggle.disabled = true;
         downloadButton.disabled = true;
         update();
+        updateDurations();
         render();
     })
 }
@@ -51,6 +52,7 @@ Tone.loaded().then(function () {
     status.innerHTML = "Track Loaded"
     enableElements();
     update();
+    updateDurations();
     render();
 })
 
@@ -145,6 +147,36 @@ function updatePlayClass() {
     }
 }
 
+function updateDurations() {
+    var durationElements = document.querySelectorAll(".previewDuration");
+    
+    for (var i = 0, element; element = durationElements[i]; i++) {
+        let index = element.dataset.index;
+        let duration = previewDuration(index);
+        element.innerHTML = formatDuration(duration);
+    }
+
+    let totalDurationElement = document.querySelector("#totalDuration");
+    let totalDuration = trackDuration();
+    totalDurationElement.innerHTML = formatDuration(totalDuration);
+
+}
+
+function previewDuration(index) {
+    let duration = buffers[index].duration * parseInt(parts[index].loop);
+    return duration
+}
+
+function trackDuration() {
+    return parts.reduce((sum, { loop }, index) => sum + buffers[index].duration * loop, 0)
+}
+
+function formatDuration(duration) {
+    let minutes = Math.floor(duration / 60);
+    let seconds = Math.floor(duration - (minutes * 60));
+    if (seconds < 10) { seconds = "0" + seconds; }
+    return minutes + ":" + seconds;
+}
 
 function makeDownload(buffer) {
     var newFile = URL.createObjectURL(bufferToWave(buffer, 0, buffer.length));

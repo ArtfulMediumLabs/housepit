@@ -22,7 +22,17 @@ body {
 #status {
   color: white;
   position: absolute;
-  top: 440px;
+  top: 450px;
+  left: 105px;
+  width: 200px;
+  text-align: center;
+  font-size: 24px;
+}
+
+#totalDuration {
+  color: white;
+  position: absolute;
+  top: 480px;
   left: 105px;
   width: 200px;
   text-align: center;
@@ -87,6 +97,14 @@ body {
 
 .preview.stop {
   background-image: url(component_preview_stop_img.jpg);
+}
+
+.previewDuration {
+  position: absolute;
+  width: 50px;
+  bottom: 100px;
+  text-align: center;
+  left: 83px;
 }
 
 input.repeat {

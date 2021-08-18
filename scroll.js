@@ -44,6 +44,10 @@ for (let i = 1; i <= numBoxes; i++) {
   preview.onclick = function () { 
     previewPart(index);
   }
+
+  const duration = document.createElement("div");
+  duration.className = "previewDuration";
+  duration.dataset.index = index;
   
   const box = document.createElement("div");
   box.className = "box";
@@ -52,6 +56,7 @@ for (let i = 1; i <= numBoxes; i++) {
   box.appendChild(num);
   box.appendChild(input);
   box.appendChild(preview);
+  box.appendChild(duration);
   
   boxes.appendChild(box);
 
