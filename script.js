@@ -32,16 +32,20 @@ const trackDir = "";
 
 const parts = [
     { file: "1_Bai-ee_Thats_My_Sista.mp3", length: 16, loop: 1 },
-    { file: "2_Bai-ee_Thats_My_Sista.mp3", length: 32, loop: 0 },
-    { file: "3_Bai-ee_Thats_My_Sista.mp3", length: 64, loop: 0 },
-    { file: "4_Bai-ee_Thats_My_Sista.mp3", length: 32, loop: 0 },
-    { file: "5_Bai-ee_Thats_My_Sista.mp3", length: 16, loop: 0 },
-    { file: "6_Bai-ee_Thats_My_Sista.mp3", length: 16, loop: 0 },
-    { file: "7_Bai-ee_Thats_My_Sista.mp3", length: 16, loop: 0 },
+    { file: "2_Bai-ee_Thats_My_Sista.mp3", length: 32, loop: 1 },
+    { file: "3_Bai-ee_Thats_My_Sista.mp3", length: 64, loop: 1 },
+    { file: "4_Bai-ee_Thats_My_Sista.mp3", length: 32, loop: 1 },
+    { file: "5_Bai-ee_Thats_My_Sista.mp3", length: 16, loop: 1 },
+    { file: "6_Bai-ee_Thats_My_Sista.mp3", length: 16, loop: 1 },
+    { file: "7_Bai-ee_Thats_My_Sista.mp3", length: 16, loop: 1 },
     { file: "8_Bai-ee_Thats_My_Sista.mp3", length: 8, loop: 1 }
 ];
 
 const buffers = parts.map(part => new Tone.Buffer({ url: trackDir + part.file }));
+
+var activeBufferIndex = -1;
+var renderedBufferIndex = 99;
+var renderedBuffer;
 
 Tone.loaded().then(function () {
     status.innerHTML = "Track Loaded"
@@ -79,6 +83,7 @@ function render() {
 
     renderingPromise.then(buffer => {
         status.innerHTML = "Ready"
+        renderedBuffer = buffer
         player.buffer = buffer
         makeDownload(buffer.get())
     });
@@ -88,23 +93,58 @@ function render() {
 }
 
 function previewPart(index) {
+    if (activeBufferIndex != index) {
+        player.stop();
+        activeBufferIndex = index;
+        player.buffer = buffers[index];
+    }
+    
     if (player.state == "started") {
         player.stop()
+    } else {
+        player.start();
     }
-    player.buffer = buffers[index];
-    player.start();
+
+    updatePlayClass();
 }
 
 playToggle.onclick = function () {
     Tone.start();
+
+    if (activeBufferIndex != renderedBufferIndex) {
+        player.stop();
+        player.buffer = renderedBuffer;
+        activeBufferIndex = renderedBufferIndex;
+    }
+
     if (player.state == "started") {
         player.stop();
-        playToggle.className = "play";
     } else {
         player.start();
-        playToggle.className = "stop";
+    }
+
+    updatePlayClass();
+}
+
+playToggle.dataset.index = renderedBufferIndex;
+
+function updatePlayClass() {
+    const isPlaying = player.state == "started"
+
+    var previewElements = document.querySelectorAll(".preview, #play-toggle");
+    
+    for (var i = 0, element; element = previewElements[i]; i++) {
+        if (element.dataset.index == activeBufferIndex && isPlaying) {
+            element.classList.remove("play")
+            element.classList.add("stop")
+        } else {
+            element.classList.remove("stop")
+            element.classList.add("play")
+        }
+
     }
 }
+
 
 function makeDownload(buffer) {
     var newFile = URL.createObjectURL(bufferToWave(buffer, 0, buffer.length));

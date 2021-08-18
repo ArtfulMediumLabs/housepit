@@ -78,8 +78,15 @@ body {
   left: 3px;
   height: 57px;
   width: 208px;
-  background-image: url(component_preview_img.png);
   border: 0;
+}
+
+.preview.play {
+  background-image: url(component_preview_img.png);
+}
+
+.preview.stop {
+  background-image: url(component_preview_stop_img.jpg);
 }
 
 input.repeat {

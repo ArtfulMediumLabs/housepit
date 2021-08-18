@@ -37,11 +37,11 @@ for (let i = 1; i <= numBoxes; i++) {
   input.value = 1;
   input.disabled = true;
 
+  const index = i - 1;
   const preview = document.createElement("button");
-  preview.className = "preview"
+  preview.classList.add("preview","play");
+  preview.dataset.index = index;
   preview.onclick = function () { 
-    const index = i - 1;
-    console.log("preview:", index);
     previewPart(index);
   }
   
