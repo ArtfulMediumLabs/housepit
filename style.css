@@ -171,3 +171,12 @@ input.repeat {
 .boxes {
   position: relative;
 }
+
+#progress {
+  background-color: greenyellow;
+  position: absolute;
+  top: 510px;
+  left: 50px;
+  width: 0px;
+  height: 2px;
+}

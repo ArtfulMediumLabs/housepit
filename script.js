@@ -232,15 +232,20 @@ function makeDownload(buffer) {
 
 function validateToken(viewer, objkt){
     const url = 'https://api.tzkt.io/v1/bigmaps/511/keys?key.address=' + viewer + '&key.nat=' + objkt + '&select=value';
-    console.log(url)
     axios.get(url)
     .then(result => {
         let count = result.data ?? [];
         isOwned = count.length > 0;
-        console.log(count, isOwned);
         downloadButton.disabled = !isOwned;
     })
     .catch(err => console.log('error', err));
 }
+
+setInterval(() => {
+    const progress = Tone.Transport.ticks / Tone.Time(totalLength()).toTicks();
+    const width = Math.floor(progress * 300);
+    document.getElementById("progress").style.width = width + 'px';
+
+}, 16);
 
 validateToken(viewer, objkt);
