@@ -13,11 +13,11 @@ let elements = document.querySelectorAll("input[type=number]");
 
 for (var i = 0, element; element = elements[i]; i++) {
     element.addEventListener("change", function (event) {
-        playToggle.disabled = true;
-        downloadButton.disabled = true;
-        update();
+        Tone.Transport.stop();
+        updateParts();
         updateDurations();
-        render();
+        schedulePlayers();
+        updatePlayClass();
     })
 }
 
@@ -30,6 +30,8 @@ function enableElements() {
 const player = new Tone.Player().toDestination();
 
 const trackDir = "";
+
+const bpm = 120;
 
 const parts = [
     { file: "1_Bai-ee_Thats_My_Sista.mp3", length: 16, loop: 1 },
@@ -50,24 +52,23 @@ var renderedBuffer;
 
 Tone.loaded().then(function () {
     status.innerHTML = "Track Loaded"
+    playToggle.disabled = false;
     enableElements();
-    update();
+    updateParts();
     updateDurations();
-    render();
-})
+    schedulePlayers();
+});
 
-function update() {
+function updateParts() {
     for (var i = 0, element; element = elements[i]; i++) {
         parts[i].loop = element.value;
     }
 }
 
-var totalLength = parts.reduce((sum, { length, loop }) => sum + length * loop, 0)
-
 function render() {
     status.innerHTML = "Rendering"
     const renderingPromise = Tone.Offline(({ transport }) => {
-        transport.bpm.value = 120;
+        transport.bpm.value = bpm;
 
         var playhead = 0;
         buffers.forEach((buffer, i) => {
@@ -81,7 +82,7 @@ function render() {
         });
 
         transport.start();
-    }, Tone.Time(totalLength + "m"))
+    }, Tone.Time(totalLength()))
 
     renderingPromise.then(buffer => {
         status.innerHTML = "Ready"
@@ -92,6 +93,32 @@ function render() {
 
     renderingPromise.then(() => playToggle.disabled = false);
     renderingPromise.then(() => downloadButton.disabled = !isOwned);
+}
+
+
+Tone.Transport.bpm.value = bpm;
+
+var players = buffers.map((buffer, i) => {
+    var partPlayer = new Tone.Player(buffer)
+    partPlayer.loop = parts[i].loop > 1;
+    partPlayer.toDestination().sync()
+    return partPlayer;
+});
+
+function schedulePlayers() {
+    var playhead = 0;
+    players.forEach((partPlayer, i) => {
+        partPlayer.unsync();
+        partPlayer.sync();
+        if (parts[i].loop == 0) { 
+            return;
+         }
+
+        partPlayer.loop = parts[i].loop > 1;
+        var loopLength = parts[i].length * parts[i].loop;
+        partPlayer.start(playhead + "m").stop(playhead + loopLength + "m");
+        playhead += loopLength
+    });    
 }
 
 function previewPart(index) {
@@ -114,24 +141,28 @@ playToggle.onclick = function () {
     Tone.start();
 
     if (activeBufferIndex != renderedBufferIndex) {
-        player.stop();
-        player.buffer = renderedBuffer;
         activeBufferIndex = renderedBufferIndex;
     }
 
-    if (player.state == "started") {
-        player.stop();
+    if (Tone.Transport.state == "started") {
+        Tone.Transport.stop();
     } else {
-        player.start();
+        Tone.Transport.start()
+        Tone.Transport.scheduleOnce(autoStop, '+' + totalLength());
     }
 
+    updatePlayClass();
+}
+
+autoStop = function() {
+    Tone.Transport.stop();
     updatePlayClass();
 }
 
 playToggle.dataset.index = renderedBufferIndex;
 
 function updatePlayClass() {
-    const isPlaying = player.state == "started"
+    const isPlaying = Tone.Transport.state == "started"
 
     var previewElements = document.querySelectorAll(".preview, #play-toggle");
     
@@ -169,6 +200,10 @@ function previewDuration(index) {
 
 function trackDuration() {
     return parts.reduce((sum, { loop }, index) => sum + buffers[index].duration * loop, 0)
+}
+
+function totalLength() {
+    return parts.reduce((sum, { length, loop }) => sum + length * loop, 0) + 'm'
 }
 
 function formatDuration(duration) {
