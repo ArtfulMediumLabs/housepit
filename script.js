@@ -121,6 +121,10 @@ function schedulePlayers() {
 }
 
 function previewPart(index) {
+    if (Tone.Transport.state == "started") {
+        Tone.Transport.stop();
+    }
+
     if (activeBufferIndex != index) {
         player.stop();
         activeBufferIndex = index;
@@ -141,6 +145,7 @@ playToggle.onclick = function () {
 
     if (activeBufferIndex != renderedBufferIndex) {
         activeBufferIndex = renderedBufferIndex;
+        player.stop();
     }
 
     if (Tone.Transport.state == "started") {
@@ -161,7 +166,7 @@ autoStop = function() {
 playToggle.dataset.index = renderedBufferIndex;
 
 function updatePlayClass() {
-    const isPlaying = Tone.Transport.state == "started"
+    const isPlaying = Tone.Transport.state == "started" || player.state == "started";
 
     var previewElements = document.querySelectorAll(".preview, #play-toggle");
     
