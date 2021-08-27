@@ -48,7 +48,6 @@ const buffers = parts.map(part => new Tone.Buffer({ url: trackDir + part.file })
 
 var activeBufferIndex = -1;
 var renderedBufferIndex = 99;
-var renderedBuffer;
 
 Tone.loaded().then(function () {
     status.innerHTML = "Track Loaded"
@@ -85,14 +84,14 @@ function render() {
     }, Tone.Time(totalLength()))
 
     renderingPromise.then(buffer => {
-        status.innerHTML = "Ready"
-        renderedBuffer = buffer
-        player.buffer = buffer
+        status.innerHTML = "Ready to Download"
         makeDownload(buffer.get())
     });
 
-    renderingPromise.then(() => playToggle.disabled = false);
-    renderingPromise.then(() => downloadButton.disabled = !isOwned);
+    renderingPromise.then(() => {
+        var downloadLink = document.getElementById("download-link");
+        downloadLink.click();
+    });
 }
 
 
@@ -213,6 +212,10 @@ function formatDuration(duration) {
     return minutes + ":" + seconds;
 }
 
+downloadButton.onclick = function () {
+    render();
+}
+
 function makeDownload(buffer) {
     var newFile = URL.createObjectURL(bufferToWave(buffer, 0, buffer.length));
 
@@ -224,11 +227,13 @@ function makeDownload(buffer) {
 
 function validateToken(viewer, objkt){
     const url = 'https://api.tzkt.io/v1/bigmaps/511/keys?key.address=' + viewer + '&key.nat=' + objkt + '&select=value';
+    console.log(url)
     axios.get(url)
     .then(result => {
         let count = result.data ?? [];
         isOwned = count.length > 0;
-        downloadButton.disabled == !playToggle.disabled && !isOwned;
+        console.log(count, isOwned);
+        downloadButton.disabled = !isOwned;
     })
     .catch(err => console.log('error', err));
 }
