@@ -28,6 +28,7 @@ function enableElements() {
 }
 
 const player = new Tone.Player().toDestination();
+player.loop = true;
 
 const trackDir = "";
 
@@ -120,7 +121,10 @@ function schedulePlayers() {
     });    
 }
 
-function previewPart(index) {
+var playerStartTime = 0;
+var previewProgressElement;
+
+function previewPart(index, element) {
     if (Tone.Transport.state == "started") {
         Tone.Transport.stop();
     }
@@ -132,12 +136,31 @@ function previewPart(index) {
     }
     
     if (player.state == "started") {
+        playerStartTime = 0;
         player.stop()
     } else {
+        playerStartTime = Tone.now();
+        previewProgressElement = element;
         player.start();
     }
 
+    resetPreviewProgress();
     updatePlayClass();
+}
+
+function resetPreviewProgress(index) {
+    var durationElements = document.querySelectorAll(".previewProgress");
+    
+    for (var i = 0, element; element = durationElements[i]; i++) {
+        element.style.width = 0;
+    }
+}
+
+function previewProgress() {
+    if (playerStartTime == 0 || player.state == "stopped") {
+        return 0;
+    }
+    return (Tone.now() - playerStartTime) % player.buffer.duration / player.buffer.duration;
 }
 
 playToggle.onclick = function () {
@@ -145,7 +168,9 @@ playToggle.onclick = function () {
 
     if (activeBufferIndex != renderedBufferIndex) {
         activeBufferIndex = renderedBufferIndex;
+        playerStartTime = 0;
         player.stop();
+        resetPreviewProgress();
     }
 
     if (Tone.Transport.state == "started") {
@@ -245,6 +270,12 @@ setInterval(() => {
     const progress = Tone.Transport.ticks / Tone.Time(totalLength()).toTicks();
     const width = Math.floor(progress * 300);
     document.getElementById("progress").style.width = width + 'px';
+
+    if (playerStartTime > 0) {
+        const previewWidth = Math.floor(previewProgress() * 100);
+        previewProgressElement.style.width = previewWidth + 'px';
+    }
+    
 
 }, 16);
 

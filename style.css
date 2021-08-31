@@ -114,6 +114,15 @@ input.repeat {
   left: 85px;
 }
 
+.previewProgress {
+  position: absolute;
+  width: 0px;
+  bottom: 75px;
+  left: 60px;
+  height: 2px;
+  background-color: greenyellow;
+}
+
 * {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;

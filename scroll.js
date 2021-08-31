@@ -37,12 +37,15 @@ for (let i = 1; i <= numBoxes; i++) {
   input.value = 1;
   input.disabled = true;
 
+  const progress = document.createElement("div");
+  progress.className = "previewProgress"
+
   const index = i - 1;
   const preview = document.createElement("button");
   preview.classList.add("preview","play");
   preview.dataset.index = index;
   preview.onclick = function () { 
-    previewPart(index);
+    previewPart(index, progress);
   }
 
   const duration = document.createElement("div");
@@ -57,6 +60,7 @@ for (let i = 1; i <= numBoxes; i++) {
   box.appendChild(input);
   box.appendChild(preview);
   box.appendChild(duration);
+  box.appendChild(progress);
   
   boxes.appendChild(box);
 
