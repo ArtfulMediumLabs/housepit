@@ -32,17 +32,20 @@ player.loop = true;
 
 const trackDir = "";
 
-const bpm = 120;
+const bpm = 135;
+// 134.125043660495983;
+// 133.3
+// 133.89
 
 const parts = [
-    { file: "1_Bai-ee_Thats_My_Sista.mp3", length: 16, loop: 1 },
-    { file: "2_Bai-ee_Thats_My_Sista.mp3", length: 32, loop: 1 },
-    { file: "3_Bai-ee_Thats_My_Sista.mp3", length: 64, loop: 1 },
-    { file: "4_Bai-ee_Thats_My_Sista.mp3", length: 32, loop: 1 },
-    { file: "5_Bai-ee_Thats_My_Sista.mp3", length: 16, loop: 1 },
-    { file: "6_Bai-ee_Thats_My_Sista.mp3", length: 16, loop: 1 },
-    { file: "7_Bai-ee_Thats_My_Sista.mp3", length: 16, loop: 1 },
-    { file: "8_Bai-ee_Thats_My_Sista.mp3", length: 8, loop: 1 }
+    { file: "1_Paul_Johnson_MF.mp3", length: 16, loop: 1 },
+    { file: "2_Paul_Johnson_MF.mp3", length: 8, loop: 1 },
+    { file: "3_Paul_Johnson_MF.mp3", length: 8, loop: 1 },
+    { file: "4_Paul_Johnson_MF.mp3", length: 8, loop: 1 },
+    { file: "5_Paul_Johnson_MF.mp3", length: 4, loop: 1 },
+    { file: "6_Paul_Johnson_MF.mp3", length: 4, loop: 1 },
+    { file: "7_Paul_Johnson_MF.mp3", length: 8, loop: 1 },
+    { file: "8_Paul_Johnson_MF.mp3", length: 8, loop: 1 },
 ];
 
 const buffers = parts.map(part => new Tone.Buffer({ url: trackDir + part.file }));
