@@ -6,7 +6,7 @@ const wrapper  = document.querySelector(".wrapper");
 const boxes    = document.querySelector(".boxes");
 const proxy    = document.createElement("div");
 
-const numBoxes  = 8;  
+const numBoxes = parts.length;
 const boxWidth  = 208 + 6;
 const boxHeight = 263 + 14;  
 const imgWidth  = boxWidth  - 6;
@@ -34,7 +34,7 @@ for (let i = 1; i <= numBoxes; i++) {
   input.className = "repeat"
   input.min = 0;
   input.step = 1;
-  input.value = 1;
+  input.value = parts[i-1].loop;
   input.disabled = true;
 
   const progress = document.createElement("div");
