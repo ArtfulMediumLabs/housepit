@@ -9,7 +9,7 @@ let playToggle = document.querySelector("#play-toggle");
 let downloadButton = document.querySelector("#download");
 let status = document.querySelector("#status");
 
-let elements = document.querySelectorAll("input[type=number]");
+let elements = document.querySelectorAll(".box input[type=number]");
 
 for (var i = 0, element; element = elements[i]; i++) {
     element.addEventListener("change", function (event) {
@@ -26,6 +26,18 @@ function enableElements() {
         element.disabled = false
     }
 }
+
+let trackRepeatElement = document.getElementById("trackRepeat");
+var trackRepeat = trackRepeatElement.value;
+
+trackRepeatElement.addEventListener("change", function(event) {
+    Tone.Transport.stop();
+
+    trackRepeat = trackRepeatElement.value;
+
+    updateDurations();
+    schedulePlayers();
+})
 
 const player = new Tone.Player().toDestination();
 player.loop = true;
@@ -57,15 +69,18 @@ function render() {
         transport.bpm.value = bpm;
 
         var playhead = 0;
-        buffers.forEach((buffer, i) => {
-            if (parts[i].loop == 0) { return }
 
-            var partPlayer = new Tone.Player(buffer)
-            partPlayer.loop = parts[i].loop > 1;
-            var loopLength = parts[i].length * parts[i].loop;
-            partPlayer.toDestination().sync().start(playhead + "m").stop(playhead + loopLength + "m");
-            playhead += loopLength
-        });
+        for (var i=0; i<trackRepeat; i++) {
+            buffers.forEach((buffer, i) => {
+                if (parts[i].loop == 0) { return }
+
+                var partPlayer = new Tone.Player(buffer)
+                partPlayer.loop = parts[i].loop > 1;
+                var loopLength = parts[i].length * parts[i].loop;
+                partPlayer.toDestination().sync().start(playhead + "m").stop(playhead + loopLength + "m");
+                playhead += loopLength
+            });
+        }
 
         transport.start();
     }, Tone.Time(totalLength()))
@@ -92,19 +107,20 @@ var players = buffers.map((buffer, i) => {
 });
 
 function schedulePlayers() {
+    players.forEach((partPlayer) => {partPlayer.unsync(); partPlayer.sync()});
     var playhead = 0;
-    players.forEach((partPlayer, i) => {
-        partPlayer.unsync();
-        partPlayer.sync();
-        if (parts[i].loop == 0) { 
-            return;
-         }
+    for (var i=0; i<trackRepeat; i++) {
+        players.forEach((partPlayer, i) => {
+            if (parts[i].loop == 0) { 
+                return;
+            }
 
-        partPlayer.loop = parts[i].loop > 1;
-        var loopLength = parts[i].length * parts[i].loop;
-        partPlayer.start(playhead + "m").stop(playhead + loopLength + "m");
-        playhead += loopLength
-    });    
+            partPlayer.loop = parts[i].loop > 1;
+            var loopLength = parts[i].length * parts[i].loop;
+            partPlayer.start(playhead + "m").stop(playhead + loopLength + "m");
+            playhead += loopLength
+        }); 
+    }   
 }
 
 var playerStartTime = 0;
@@ -214,11 +230,15 @@ function previewDuration(index) {
 }
 
 function trackDuration() {
-    return parts.reduce((sum, { loop }, index) => sum + buffers[index].duration * loop, 0)
+    return parts.reduce((sum, { loop }, index) => sum + buffers[index].duration * loop, 0) * trackRepeat;
+}
+
+function trackLoopLength() {
+    return parts.reduce((sum, { length, loop }) => sum + length * loop, 0) + 'm';
 }
 
 function totalLength() {
-    return parts.reduce((sum, { length, loop }) => sum + length * loop, 0) + 'm'
+    return parts.reduce((sum, { length, loop }) => sum + length * loop, 0) * trackRepeat + 'm';
 }
 
 function formatDuration(duration) {

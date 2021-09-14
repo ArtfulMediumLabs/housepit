@@ -39,6 +39,13 @@ body {
   font-size: 24px;
 }
 
+#trackRepeat {
+  position: absolute;
+  width: 50px;
+  top: 484px;
+  left: 250px;
+}
+
 #content {
   position: relative;
 	margin: auto;
