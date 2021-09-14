@@ -12,3 +12,5 @@ const parts = [
     { file: "7_Bai-ee_Thats_My_Sista.mp3", length: 16, loop: 0 },
     { file: "8_Bai-ee_Thats_My_Sista.mp3", length: 8, loop: 1 }
 ];
+
+const downloadName = "Bai-ee_(Thats_My_Sista)_Unreleased_NFT.wav"

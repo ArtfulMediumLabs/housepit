@@ -257,8 +257,7 @@ function makeDownload(buffer) {
 
     var downloadLink = document.getElementById("download-link");
     downloadLink.href = newFile;
-    var name = "Bai-ee_(Thats_My_Sista)_Unreleased.wav"
-    downloadLink.download = name;
+    downloadLink.download = downloadName;
 }
 
 function validateToken(viewer, objkt){
